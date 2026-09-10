@@ -1,7 +1,6 @@
 # HabotConnect Hiring Project — Junior Cloud & DevOps Engineer
 
-**Submitted by:** [Your Full Name] — [Your Email] — [Your Phone Number]
-
+**Submitted by:** SHASHANK DWIVEDI — dwivedishashank413@gmail.com — +917080498684
 ## Folder architecture
 
 ```

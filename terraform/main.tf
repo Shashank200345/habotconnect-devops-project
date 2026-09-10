@@ -14,6 +14,13 @@ provider "google" {
   region  = var.region
 }
 
+# App Engine application is a one-time project-level resource. It was created
+# manually initially, so it must be imported into Terraform state before apply.
+resource "google_app_engine_application" "default" {
+  project     = var.project_id
+  location_id = var.app_engine_location_id
+}
+
 # ---------------------------------------------------------------------------
 # D0 — RAW LANDING (GCS)
 # Unvalidated data lands here first. Nothing downstream reads from D0 directly;

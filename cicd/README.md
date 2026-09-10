@@ -1,6 +1,6 @@
 # Task 2 — Poka-Yoke Automated CI/CD Build Gate
 
-**Submitted by:** [Your Full Name] — [Your Email] — [Your Phone Number]
+**Submitted by:** SHASHANK DWIVEDI — dwivedishashank413@gmail.com — +917080498684
 
 ## How the fail-closed mechanism works
 

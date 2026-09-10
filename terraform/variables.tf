@@ -9,6 +9,12 @@ variable "region" {
   default     = "us-central1"
 }
 
+variable "app_engine_location_id" {
+  description = "Immutable App Engine application location. Must match the existing application."
+  type        = string
+  default     = "us-central"
+}
+
 variable "environment" {
   description = "Deployment environment name, used in resource naming and labels."
   type        = string

@@ -1,6 +1,6 @@
 # Task 1 — Secure Staging Infrastructure (Terraform)
 
-**Submitted by:** [Your Full Name] — [Your Email] — [Your Phone Number]
+**Submitted by:** SHASHANK DWIVEDI — dwivedishashank413@gmail.com — +917080498684
 
 ## What this provisions
 
