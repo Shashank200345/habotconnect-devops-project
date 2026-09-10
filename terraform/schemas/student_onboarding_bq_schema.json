@@ -1,0 +1,12 @@
+[
+  { "name": "record_id", "type": "STRING", "mode": "REQUIRED", "description": "UUID assigned at validation time. Primary key for the staged record." },
+  { "name": "full_name", "type": "STRING", "mode": "REQUIRED", "description": "Student full name." },
+  { "name": "date_of_birth", "type": "DATE", "mode": "REQUIRED", "description": "Student date of birth." },
+  { "name": "has_diagnosed_learning_difficulty", "type": "BOOLEAN", "mode": "REQUIRED", "description": "DCYN field. Collapses the free-text intake question into a strict Yes/No." },
+  { "name": "diagnosis_type", "type": "STRING", "mode": "NULLABLE", "description": "Populated only when has_diagnosed_learning_difficulty is true; enforced at the serializer level, not left to human review." },
+  { "name": "guardian_consent_given", "type": "BOOLEAN", "mode": "REQUIRED", "description": "DCYN field. Must be true for the record to be promoted from D0 to D1 at all." },
+  { "name": "requires_lsa_support", "type": "BOOLEAN", "mode": "REQUIRED", "description": "DCYN field. Drives whether the record is routed to LSA matching." },
+  { "name": "preferred_session_frequency", "type": "STRING", "mode": "REQUIRED", "description": "One of a fixed enum (daily/weekly/biweekly/monthly) — never free text." },
+  { "name": "contact_email", "type": "STRING", "mode": "REQUIRED", "description": "Guardian contact email, format-validated before promotion." },
+  { "name": "submitted_at", "type": "TIMESTAMP", "mode": "REQUIRED", "description": "Validation timestamp, set server-side — never trusted from the incoming payload." }
+]

@@ -1,0 +1,39 @@
+POKA-YOKE BUILD GATE — LOCAL REPRODUCTION EVIDENCE
+====================================================
+This log was captured by actually running the two gate tools (gitleaks,
+flake8) against the demo-bad-commit/ and demo-good-commit/ folders in this
+repo, reproducing locally what the GitHub Actions gate does on every push.
+
+--- GATE 2: SECRET SCAN (gitleaks v8.18.4) ---
+
+$ gitleaks detect --no-git -s demo-bad-commit -v
+Finding:     STRIPE_API_KEY = "REDACTED_LOCAL_TEST_SECRET"
+RuleID:      stripe-access-token
+File:        demo-bad-commit/leaked_config.py
+Line:        6
+leaks found: 1
+EXIT CODE: 1   <-- non-zero = job fails = deploy job never starts
+
+$ gitleaks detect --no-git -s demo-good-commit -v
+no leaks found
+EXIT CODE: 0   <-- clean = job passes
+
+--- GATE 1: LINT (flake8) ---
+
+$ flake8 demo-bad-commit/bad_format.py --max-line-length=100
+demo-bad-commit/bad_format.py:1:10: E231 missing whitespace after ','
+demo-bad-commit/bad_format.py:2:6: E225 missing whitespace around operator
+demo-bad-commit/bad_format.py:4:1: F401 'os' imported but unused
+demo-bad-commit/bad_format.py:4:1: E305 expected 2 blank lines after class or function definition, found 0
+demo-bad-commit/bad_format.py:4:1: E402 module level import not at top of file
+EXIT CODE: 1   <-- non-zero = job fails = deploy job never starts
+
+CONCLUSION
+----------
+Both gate mechanisms used in .github/workflows/ci-cd-gate.yml were verified
+directly (not just described): a non-compliant commit produces a non-zero
+exit code from the exact tool the workflow runs, and a compliant commit
+passes cleanly. Because the "deploy" job's `needs: [lint, secret-scan]`
+makes it unreachable unless both upstream jobs succeed, this is sufficient
+to demonstrate fail-closed behavior end to end without needing a live
+GitHub Actions run.

@@ -1,0 +1,89 @@
+name: Poka-Yoke Build Gate
+
+# Fail-closed by construction: the "deploy" job's `needs:` list includes both
+# gate jobs. If either fails, GitHub Actions never starts the deploy job —
+# there is no code path where a failing gate still results in a deploy.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  # ---------------------------------------------------------------------
+  # GATE 1 — Lint & format. Non-compliant code never reaches deploy.
+  # ---------------------------------------------------------------------
+  lint:
+    name: Lint & format gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python lint tools
+        run: pip install flake8 black
+
+      - name: Run flake8 (fails the job on any violation)
+        run: flake8 drf/ --max-line-length=100
+
+      - name: Run black --check (fails the job on any unformatted file)
+        run: black --check drf/
+
+      - name: Set up Node
+        if: hashFiles('frontend/package.json') != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install & run eslint (React frontend)
+        if: hashFiles('frontend/package.json') != ''
+        working-directory: frontend
+        run: |
+          npm ci
+          npx eslint . --max-warnings=0
+
+  # ---------------------------------------------------------------------
+  # GATE 2 — Secret scan. Any hardcoded credential quarantines the build.
+  # ---------------------------------------------------------------------
+  secret-scan:
+    name: Secret scan gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history so the scan covers the whole diff, not just HEAD
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: false
+        # gitleaks-action exits non-zero on any detected secret, which fails
+        # this job — quarantining the build before deploy can ever run.
+
+  # ---------------------------------------------------------------------
+  # DEPLOY — only reachable if BOTH gates above passed.
+  # ---------------------------------------------------------------------
+  deploy:
+    name: Deploy to GCP App Engine
+    runs-on: ubuntu-latest
+    needs: [lint, secret-scan] # <- the fail-closed mechanism: deploy cannot start otherwise
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy
+        run: gcloud app deploy drf/app.yaml --quiet

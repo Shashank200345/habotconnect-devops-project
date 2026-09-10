@@ -1,0 +1,10 @@
+{
+  "full_name": "Diya Sharma",
+  "date_of_birth": "2016-09-01",
+  "has_diagnosed_learning_difficulty": false,
+  "diagnosis_type": "",
+  "guardian_consent_given": false,
+  "requires_lsa_support": false,
+  "preferred_session_frequency": "monthly",
+  "contact_email": "guardian.sharma@example.com"
+}

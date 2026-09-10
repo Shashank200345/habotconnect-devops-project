@@ -1,0 +1,16 @@
+# Terraform local state and variables
+**/.terraform/
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/terraform.tfvars
+**/*.tfvars
+**/*.tfvars.json
+
+# Local credentials and generated files
+*.json.key
+credentials.json
+
+# Generated local files
+**/__pycache__/
+**/*.pyc
+terraform/schemas/*.rendered.sql

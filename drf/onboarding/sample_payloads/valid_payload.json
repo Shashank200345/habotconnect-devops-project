@@ -1,0 +1,10 @@
+{
+  "full_name": "Aarav Mehta",
+  "date_of_birth": "2015-04-12",
+  "has_diagnosed_learning_difficulty": true,
+  "diagnosis_type": "Dyslexia",
+  "guardian_consent_given": true,
+  "requires_lsa_support": true,
+  "preferred_session_frequency": "weekly",
+  "contact_email": "guardian.mehta@example.com"
+}

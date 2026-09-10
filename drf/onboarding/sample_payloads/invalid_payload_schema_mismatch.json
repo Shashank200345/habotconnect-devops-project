@@ -1,0 +1,10 @@
+{
+  "full_name": "Kabir Rao",
+  "date_of_birth": "2014-11-20",
+  "has_diagnosed_learning_difficulty": true,
+  "diagnosis_type": "",
+  "guardian_consent_given": true,
+  "requires_lsa_support": true,
+  "preferred_session_frequency": "fortnightly",
+  "contact_email": "not-an-email"
+}

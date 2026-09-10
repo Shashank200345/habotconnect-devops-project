@@ -1,0 +1,8 @@
+runtime: python313
+service: default
+
+entrypoint: gunicorn --bind :$PORT --workers 2 config.wsgi:application
+
+env_variables:
+  DJANGO_DEBUG: "False"
+  DJANGO_ALLOWED_HOSTS: ".appspot.com"
