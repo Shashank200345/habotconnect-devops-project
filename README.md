@@ -33,6 +33,47 @@ habotconnect-project/
 └── docs/                       15-slide presentation deck goes here
 ```
 
+## Project overview
+
+This project is a production-style deployment and automation blueprint for a
+student onboarding platform. It demonstrates how validated Django data moves
+through a protected Google Cloud pipeline:
+
+```text
+Student onboarding request
+        |
+        v
+Django REST Framework validation
+        |
+        v
+D0 Google Cloud Storage raw landing
+        |
+        v
+D1 BigQuery staged and enforced table
+        |
+        v
+Row-Level Security filtered analytics access
+```
+
+The application is deployed to Google App Engine and uses Google Secret
+Manager for its production Django secret key. Terraform manages the existing
+App Engine application, storage bucket, BigQuery resources, and IAM bindings.
+
+## Security design
+
+- The raw landing bucket blocks public access, uses uniform bucket-level
+  access, enables object versioning, and deletes transient objects after 30
+  days.
+- The raw landing writer can create objects but cannot read, overwrite, or
+  delete existing objects.
+- The staged reader has read-only BigQuery access and is restricted by the
+  `lsa_support_only` Row-Level Security policy.
+- Schema-owner access is limited to the staged dataset. Google Cloud does not
+  support IAM conditions on BigQuery dataset bindings, so time-boxing must be
+  handled through an external access-review process.
+- GitHub Actions authenticates with a dedicated deployment identity, and
+  deployment is reachable only after linting and secret scanning succeed.
+
 ## Verification status
 
 To be direct about verification, per the brief's emphasis on rigor and zero
@@ -49,15 +90,16 @@ placeholders:
   generated locally and is never pushed to GitHub. The committed repository
   is clean and passes Gitleaks.
 
-## Before you submit
+## Live deployment
 
-- [x] Fill in your actual name, email, and phone in every README
-- [ ] Get the Leadership Principles + Values PDFs from Human Resources if you don't have them yet
-- [x] Run `terraform plan` against the live GCP project and verify no drift
-- [x] Run the compliant GitHub Actions pipeline and capture the successful deployment evidence
-- [ ] Capture a failed lint-branch run showing the skipped deployment job
-- [ ] Build the 15-slide deck in `docs/` (architecture overview + logic flow + the fail-closed proof)
-- [x] Confirm the project READMEs contain no personal-information placeholders
-- [ ] Submit via the Google Form before 13 September 2026
+- Google Cloud project: `habot-devops-staging`
+- App Engine service: `default`
+- App Engine URL: https://habot-devops-staging.uc.r.appspot.com
+- BigQuery dataset: `d1_staged_enforced`
+- BigQuery table: `student_onboarding`
+- Row-Level Security policy: `lsa_support_only`
+- Raw landing bucket: `habot-devops-staging-d0-raw-landing-staging`
 
-Live App Engine URL: https://habot-devops-staging.uc.r.appspot.com
+The repository contains the implementation, test fixtures, workflow
+configuration, and reproducible local evidence for all three assignment
+tasks. The presentation materials are maintained separately in `docs/`.
