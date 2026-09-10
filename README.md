@@ -60,3 +60,5 @@ placeholders:
 - [ ] Build the 15-slide deck in `docs/` (architecture overview + logic flow + the fail-closed proof)
 - [ ] Confirm every doc uses full forms only — no abbreviations, no placeholders left behind
 - [ ] Submit via the Google Form before 13 September 2026
+
+Pipeline smoke test.
