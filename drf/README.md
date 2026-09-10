@@ -48,6 +48,12 @@ The code was also run through the same tools as the CI/CD gate in Task 2
 (`black`, `flake8 --max-line-length=100`) with a clean exit — this
 deliverable would pass its own pipeline.
 
+The backend is deployed to Google App Engine at
+`https://habot-devops-staging.uc.r.appspot.com`. Production Django loads its
+secret key from Google Secret Manager using the App Engine service identity;
+the deployed service reached `SERVING` status and the administration login
+route returned HTTP 200.
+
 ## How to run this yourself
 
 ```bash

@@ -21,26 +21,30 @@ depends on a human remembering to check a status before merging.
 Rather than only asserting the gate works, `demo-gate-evidence.log` captures
 a real run of both underlying tools:
 
-- `demo-bad-commit/leaked_config.py` — a synthetic (fake) hardcoded Stripe
-  key and DB URL, reproducing the exact scenario in the brief. Running the
-  real `gitleaks` binary against it returns **exit code 1** with the exact
-  finding (rule `stripe-access-token`, line 6).
+- `demo-bad-commit/leaked_config.py` — a sanitized fixture documenting the
+  scenario in the brief. A credential-shaped failure file is generated only
+  in a local temporary directory and is never pushed to GitHub.
 - `demo-bad-commit/bad_format.py` — intentionally malformatted code. Running
   the real `flake8` against it returns **exit code 1** with 5 violations.
 - `demo-good-commit/config.py` — the compliant fix (secrets read from
   environment variables, populated from GCP Secret Manager / Actions
   secrets at deploy time). Both tools return **exit code 0** against it.
 
-This was run directly in this environment, not simulated — see
-`demo-gate-evidence.log` for the raw tool output. On a real GitHub Actions
-run, a non-zero exit from either tool fails that job, which — via `needs:`
 — prevents `deploy` from ever starting.
+This was run directly in this environment, not simulated — see
+`demo-gate-evidence.log` for the raw tool output. The live GitHub Actions
+workflow also completed the lint gate, secret-scan gate, and App Engine
+deployment successfully. On any run, a non-zero exit from either tool fails
+that job, which — via `needs:` — prevents `deploy` from ever starting.
 
 ## To reproduce yourself against a real PR
 
-1. Push a branch containing `demo-bad-commit/leaked_config.py` into the repo
-   root and open a PR — the `secret-scan` job will fail and the checks tab
-   will show it red.
-2. Screenshot the failed check + the `deploy` job showing "skipped" (not
+1. Create a temporary local credential-shaped file and run Gitleaks against
+  it. Never push that file to GitHub because repository secret scanning will
+  block the push.
+2. Push a branch with a deliberately malformed Python file — without any
+  secret — and open a pull request. The `lint` job will fail and the checks
+  tab will show it red.
+3. Screenshot the failed check + the `deploy` job showing "skipped" (not
    "failed" — skipped because its `needs:` condition was never met) for the
    presentation.

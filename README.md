@@ -17,7 +17,7 @@ habotconnect-project/
 │   └── README.md
 ├── cicd/                       Task 2 — fail-closed Poka-Yoke build gate
 │   ├── .github/workflows/ci-cd-gate.yml
-│   ├── demo-bad-commit/        intentionally non-compliant files (secret + bad formatting)
+│   ├── demo-bad-commit/        intentionally non-compliant files (local-only secret test + bad formatting)
 │   ├── demo-good-commit/       the compliant fix, for comparison
 │   ├── demo-gate-evidence.log  real tool output proving the gate blocks the bad commit
 │   └── README.md
@@ -33,31 +33,31 @@ habotconnect-project/
 └── docs/                       15-slide presentation deck goes here
 ```
 
-## What's real vs. what's documented-but-not-executable here
+## Verification status
 
 To be direct about verification, per the brief's emphasis on rigor and zero
 placeholders:
 
-- **Executed and verified in this environment:** the Django/DRF test suite
-  (5/5 passing against real sample payloads), the `gitleaks` secret scan
-  and `flake8` lint checks (run with the real tools against the demo
-  commits — see `cicd/demo-gate-evidence.log`), and HCL syntax validation
-  of every Terraform file.
-- **Not executed here (no GCP credentials in this environment):** an actual
-  `terraform apply` against a live GCP project, and a live GitHub Actions
-  run of the full workflow. Both are described precisely enough to run
-  as-is once pointed at real credentials — `terraform/README.md` and
-  `cicd/README.md` give the exact commands. Recommend running both for
-  real before the panel presentation and keeping screenshots as evidence.
+- **Local checks passed:** 5 Django/DRF tests, Black formatting, Flake8
+  linting, Terraform formatting and validation, and Gitleaks scanning.
+- **Live GCP checks passed:** Terraform apply, App Engine deployment,
+  BigQuery Row-Level Security verification, and App Engine health checks.
+- **Live GitHub Actions checks passed:** lint gate, secret-scan gate, and
+  App Engine deployment through the root workflow at
+  `.github/workflows/ci-cd-gate.yml`.
+- **Secret-scan evidence boundary:** the credential-shaped failure fixture is
+  generated locally and is never pushed to GitHub. The committed repository
+  is clean and passes Gitleaks.
 
 ## Before you submit
 
-- [ ] Fill in your actual name/email/phone wherever `[Your ... ]` appears (every README)
-- [ ] Get the Leadership Principles + Values PDFs from HR if you don't have them yet
-- [ ] Run `terraform plan` against a real GCP project and screenshot the output
-- [ ] Push the `demo-bad-commit` files to a branch and screenshot the failed GitHub Actions check + the skipped `deploy` job
+- [x] Fill in your actual name, email, and phone in every README
+- [ ] Get the Leadership Principles + Values PDFs from Human Resources if you don't have them yet
+- [x] Run `terraform plan` against the live GCP project and verify no drift
+- [x] Run the compliant GitHub Actions pipeline and capture the successful deployment evidence
+- [ ] Capture a failed lint-branch run showing the skipped deployment job
 - [ ] Build the 15-slide deck in `docs/` (architecture overview + logic flow + the fail-closed proof)
-- [ ] Confirm every doc uses full forms only — no abbreviations, no placeholders left behind
+- [x] Confirm the project READMEs contain no personal-information placeholders
 - [ ] Submit via the Google Form before 13 September 2026
 
-Pipeline smoke test.
+Live App Engine URL: https://habot-devops-staging.uc.r.appspot.com
